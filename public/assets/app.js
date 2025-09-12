@@ -651,6 +651,9 @@ async function calcularCandidatos(){
     alert('Por favor selecciona un uso predefinido o ingresa una carga viva personalizada');
     return;
   }
+
+  // Primero calcular la comparación Atex vs Macizo general
+  await calcularComparacionAtexMacizo();
   
   console.log('Starting product calculation...');
   console.log('Available products:', state.productos.length);
@@ -697,6 +700,127 @@ async function calcularCandidatos(){
   
   console.log('All results sorted:', resultados.length);
   state.candidatosAll = resultados;
+}
+
+async function calcularComparacionAtexMacizo() {
+  console.log('Calculando comparación Atex vs Macizo...');
+  
+  const ejeX = parseFloat(state.ejeX);
+  const ejeY = parseFloat(state.ejeY);
+  
+  const params = new URLSearchParams({
+    ejeX: ejeX,
+    ejeY: ejeY,
+    h_macizo: 32,
+    h_atex: 47.5,
+    q_atex: 0.225,
+    coef_carga: 1.0
+  });
+  
+  try {
+    const res = await fetch(`${apiBase}/calcular-atex.php?${params}`);
+    const resultado = await res.json();
+    
+    console.log('Comparación Atex vs Macizo:', resultado);
+    
+    if (resultado.ok) {
+      // Guardar la comparación en el estado global
+      state.comparacionAtexMacizo = resultado;
+      
+      // Mostrar la comparación en la interfaz
+      mostrarComparacionAtexMacizo(resultado);
+    } else {
+      console.error('Error en comparación Atex vs Macizo:', resultado);
+    }
+  } catch (error) {
+    console.error('Error calculando comparación Atex vs Macizo:', error);
+  }
+}
+
+function mostrarComparacionAtexMacizo(resultado) {
+  console.log('Mostrando comparación Atex vs Macizo');
+  
+  // Buscar o crear el contenedor de comparación
+  let comparacionContainer = document.querySelector('#comparacion-atex-macizo');
+  if (!comparacionContainer) {
+    comparacionContainer = document.createElement('div');
+    comparacionContainer.id = 'comparacion-atex-macizo';
+    comparacionContainer.className = 'comparacion-container';
+    
+    // Insertar antes del contenedor de resultados
+    const resultsContainer = document.querySelector('#cards');
+    if (resultsContainer && resultsContainer.parentNode) {
+      resultsContainer.parentNode.insertBefore(comparacionContainer, resultsContainer);
+    }
+  }
+  
+  comparacionContainer.innerHTML = `
+    <div class="comparacion-header">
+      <h2>Comparación: Losa Maciza vs Sistema Atex</h2>
+      <p class="comparacion-subtitle">Análisis para losa de ${resultado.dimensiones.area_losa} m² (${resultado.ejeX_m}m × ${resultado.ejeY_m}m)</p>
+    </div>
+    
+    <div class="comparacion-grid">
+      <div class="sistema-card macizo">
+        <h3>🏗️ Losa Maciza</h3>
+        <div class="valores">
+          <div class="valor-item">
+            <span class="label">Hormigón:</span>
+            <span class="valor">${resultado.hormigon.macizo} ${resultado.hormigon.unidad}</span>
+          </div>
+          <div class="valor-item">
+            <span class="label">Acero:</span>
+            <span class="valor">${resultado.acero.macizo} ${resultado.acero.unidad}</span>
+          </div>
+          <div class="valor-item">
+            <span class="label">Altura:</span>
+            <span class="valor">${resultado.dimensiones.h_macizo} cm</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="vs-separator">
+        <span>VS</span>
+      </div>
+      
+      <div class="sistema-card atex">
+        <h3>⚡ Sistema Atex</h3>
+        <div class="valores">
+          <div class="valor-item">
+            <span class="label">Hormigón:</span>
+            <span class="valor">${resultado.hormigon.atex} ${resultado.hormigon.unidad}</span>
+          </div>
+          <div class="valor-item">
+            <span class="label">Acero:</span>
+            <span class="valor">${resultado.acero.atex} ${resultado.acero.unidad}</span>
+          </div>
+          <div class="valor-item">
+            <span class="label">Altura:</span>
+            <span class="valor">${resultado.dimensiones.h_atex} cm</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="ahorros-section">
+      <h3>💰 Ahorros con Sistema Atex</h3>
+      <div class="ahorros-grid">
+        <div class="ahorro-item hormigon">
+          <div class="ahorro-porcentaje">${resultado.hormigon.ahorro_pct}%</div>
+          <div class="ahorro-label">Ahorro Hormigón</div>
+          <div class="ahorro-detalle">${(resultado.hormigon.macizo - resultado.hormigon.atex).toFixed(3)} ${resultado.hormigon.unidad} menos</div>
+        </div>
+        <div class="ahorro-item acero">
+          <div class="ahorro-porcentaje">${resultado.acero.ahorro_pct}%</div>
+          <div class="ahorro-label">Ahorro Acero</div>
+          <div class="ahorro-detalle">${(resultado.acero.macizo - resultado.acero.atex).toFixed(1)} ${resultado.acero.unidad} menos</div>
+        </div>
+      </div>
+      <div class="estado-resultado estado-${resultado.estado}">
+        Estado: <strong>${resultado.estado.toUpperCase()}</strong>
+      </div>
+    </div>
+  `;
 }
 
 function renderCard(item, container){
