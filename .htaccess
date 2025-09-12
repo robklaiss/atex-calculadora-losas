@@ -1,0 +1,23 @@
+# Disable directory listing
+Options -Indexes
+
+# Serve PHP via standard handler (assumes Apache + PHP module)
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_value error_reporting 0
+</IfModule>
+
+# Cache-busting: disable caching for CSS/JS in public/assets during development
+<IfModule mod_expires.c>
+    ExpiresActive On
+    <FilesMatch "\.(css|js)$">
+        ExpiresDefault "access plus 0 seconds"
+    </FilesMatch>
+</IfModule>
+
+# Security headers (basic)
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>

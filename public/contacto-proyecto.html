@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hablemos sobre su proyecto - Atex Losas</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <style>
+        .contact-form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group { 
+            margin-bottom: 1.5rem; 
+        }
+        
+        .form-group label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            font-weight: 500; 
+        }
+        
+        .form-group input, 
+        .form-group textarea {
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            font-size: 1rem;
+        }
+        
+        .form-group.invalid input,
+        .form-group.invalid textarea {
+            border-color: #dc3545;
+            background-color: #fff8f8;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .form-group.invalid .error-message {
+            display: block;
+        }
+        
+        #formError {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.25rem;
+            display: none;
+        }
+        
+        .success-message {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.25rem;
+            display: none;
+        }
+        
+        .btn-submit { 
+            background-color: #F48120; 
+            color: white; 
+            border: none; 
+            padding: 0.75rem 1.5rem; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            width: 100%; 
+        }
+        
+        .btn-submit:hover { 
+            background-color: #e0761c; 
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 130px;
+            padding: 0.75rem 15px;
+            background-color: #f5f5f5;
+            color: #555;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-back:hover {
+            background-color: #e9e9e9;
+            color: #333;
+        }
+        
+        .back-link {
+            display: block;
+            text-align: center;
+            margin: 1.5rem auto 0;
+            color: #F48120;
+            text-decoration: none;
+            font-weight: 500;
+            max-width: 200px;
+        }
+        
+        .form-subtitle { 
+            color: #666; 
+            margin-bottom: 1.5rem; 
+            font-size: 1.1rem; 
+            line-height: 1.5; 
+        }
+        
+        .product-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 0 0 0 0;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .product-image {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 0.5rem;
+            background: white;
+        }
+        
+        .product-details {
+            width: 100%;
+        }
+        
+        .product-details h3 {
+            margin: 0 0 0.5rem 0;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .form-logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .form-logo {
+            max-width: 200px;
+            height: auto;
+        }
+        
+        .form-logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .form-logo {
+            max-width: 200px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard">
+        <div class="wizard-steps">
+            <div class="contact-form-container">
+                <div class="form-logo-container">
+                    <a href="index.php">
+                        <img src="../atex_latam_logo.png" alt="Atex Losas" class="form-logo">
+                    </a>
+                </div>
+                <h2>Hablemos sobre su proyecto</h2>
+                <p class="form-subtitle">Por favor complete los siguientes campos y en breve estaremos en contacto con usted</p>
+                
+                <div id="productInfo" class="product-info" style="display: none;">
+                    <img id="productImage" src="" alt="Tipo de losa" class="product-image">
+                    <div class="product-details">
+                        <h3 id="productName"></h3>
+                        <p id="productDetails"></p>
+                    </div>
+                </div>
+
+                <div id="successMessage" class="success-message" style="display: none;"></div>
+                <form id="contactForm" action="#" method="POST" novalidate>
+                    <div id="formError" role="alert"></div>
+                    <div class="form-group">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido">Apellido *</label>
+                        <input type="text" id="apellido" name="apellido" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="empresa">Empresa</label>
+                        <input type="text" id="empresa" name="empresa">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono *</label>
+                        <input type="tel" id="telefono" name="telefono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mensaje">Observaciones</label>
+                        <textarea id="mensaje" name="mensaje" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="#" id="backButton" class="btn-back">← Volver</a>
+                        <button type="submit" class="btn-submit">Enviar solicitud</button>
+                    </div>
+                </form>
+
+                <a href="index.php" class="back-link">← Volver al inicio</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('contactForm');
+            const formError = document.getElementById('formError');
+            const successMessage = document.getElementById('successMessage');
+            const backButton = document.getElementById('backButton');
+            const requiredFields = form.querySelectorAll('[required]');
+            const productInfo = document.getElementById('productInfo');
+            
+            // Check if we have product info in the URL
+            const params = new URLSearchParams(window.location.search);
+            const nombre = params.get('nombre');
+            const altura = params.get('altura');
+            const tipo = params.get('tipo');
+            const direccional = params.get('direccional');
+            
+            // If we have product info, show it
+            if (nombre) {
+                productInfo.style.display = 'flex';
+                document.getElementById('productName').textContent = nombre;
+                document.getElementById('productDetails').textContent = `${altura || ''} ${tipo || ''}`.trim();
+                
+                // Set product image based on directionality
+                const productImage = document.getElementById('productImage');
+                if (direccional) {
+                    const isBidireccional = direccional.toLowerCase().includes('bi');
+                    const imagePath = isBidireccional ? 
+                        'assets/atex-forma-bidirecional.webp' : 
+                        'assets/atex-forma-unidirecional.webp';
+                    productImage.src = imagePath;
+                    productImage.alt = `Losa ${isBidireccional ? 'Bidireccional' : 'Unidireccional'}`;
+                }
+            }
+            
+            // Handle back button
+            if (backButton) {
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.history.back();
+                });
+            }
+            
+            // Validate individual fields on blur
+            function validateField(field) {
+                const formGroup = field.closest('.form-group');
+                if (field.checkValidity()) {
+                    formGroup.classList.remove('invalid');
+                    return true;
+                } else {
+                    formGroup.classList.add('invalid');
+                    return false;
+                }
+            }
+            
+            // Add event listeners for field validation
+            requiredFields.forEach(field => {
+                field.addEventListener('blur', () => validateField(field));
+                field.addEventListener('input', () => {
+                    if (field.value.trim() !== '') {
+                        field.closest('.form-group').classList.remove('invalid');
+                    }
+                });
+            });
+            
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Reset previous errors
+                formError.style.display = 'none';
+                let isValid = true;
+                
+                // Validate all required fields
+                requiredFields.forEach(field => {
+                    if (!validateField(field)) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    formError.textContent = 'Por favor complete todos los campos requeridos correctamente.';
+                    formError.style.display = 'block';
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    return;
+                }
+                
+                // If all validations pass, submit the form
+                // Here you would typically send the form data to a server
+                formError.textContent = '';
+                formError.style.display = 'none';
+                
+                // Show success message
+                successMessage.textContent = '¡Gracias por su interés! Nos pondremos en contacto con usted pronto.';
+                successMessage.style.display = 'block';
+                
+                // Reset form
+                form.reset();
+                
+                // Scroll to top to show success message
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
