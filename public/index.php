@@ -7,10 +7,12 @@
 <title>Atex Calculadora</title>
 <link rel="stylesheet" href="assets/styles.css" />
 <script defer src="assets/app.js"></script>
+<link href="/atex-latam-favicon.png?1" rel="icon" type="image/png" />
+<link href="/atex-latam-webclip.png?1" rel="apple-touch-icon" type="image/png" />
 </head>
 <body>
 <header class="topbar">
-  <img src="../atex_latam_logo.png" alt="Atex" class="logo" />
+  <img src="images/atex_latam_logo.png" alt="Atex" class="logo" />
   <div class="contact-section">
     <a href="contacto-proyecto.html" class="contact-btn"><span>¡Hablemos sobre su proyecto!</span></a>
   </div>
