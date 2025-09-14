@@ -170,7 +170,7 @@ h1{text-align:center}
 }
 
 .ahorros-section h3 {
-  color: #F48120;
+  color: #6c757d;
   margin: 0 0 20px 0;
   font-size: 1.4rem;
   text-align: center;
@@ -220,8 +220,10 @@ h1{text-align:center}
 .ahorro-item.hormigon .ahorro-label,
 .ahorro-item.hormigon .ahorro-detalle,
 .ahorro-item.acero .ahorro-label,
-.ahorro-item.acero .ahorro-detalle {
-  color: #ffffff;
+.ahorro-item.acero .ahorro-detalle,
+.ahorro-item.hormigon .ahorro-porcentaje,
+.ahorro-item.acero .ahorro-porcentaje {
+  color: #6c757d;
 }
 
 .ahorro-label {
