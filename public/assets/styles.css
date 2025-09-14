@@ -112,11 +112,11 @@ h1{text-align:center}
 }
 
 .sistema-card.macizo h3 {
-  color: #dc3545;
+  color: #2c3e50;
 }
 
 .sistema-card.atex h3 {
-  color: #28a745;
+  color: #2c3e50;
 }
 
 .valores {
@@ -170,7 +170,7 @@ h1{text-align:center}
 }
 
 .ahorros-section h3 {
-  color: #28a745;
+  color: #2c3e50;
   margin: 0 0 20px 0;
   font-size: 1.4rem;
   text-align: center;

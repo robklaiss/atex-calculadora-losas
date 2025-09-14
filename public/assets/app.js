@@ -803,7 +803,7 @@ function mostrarComparacionAtexMacizo(resultado) {
     </div>
     
     <div class="ahorros-section">
-      <h3>💰 Ahorros con Sistema Atex</h3>
+      <h3>Ahorros con Sistema Atex</h3>
       <div class="ahorros-grid">
         <div class="ahorro-item hormigon">
           <div class="ahorro-porcentaje">${resultado.hormigon.ahorro_pct}%</div>
@@ -815,9 +815,6 @@ function mostrarComparacionAtexMacizo(resultado) {
           <div class="ahorro-label">Ahorro Acero</div>
           <div class="ahorro-detalle">${(resultado.acero.macizo - resultado.acero.atex).toFixed(1)} ${resultado.acero.unidad} menos</div>
         </div>
-      </div>
-      <div class="estado-resultado estado-${resultado.estado}">
-        Estado: <strong>${resultado.estado.toUpperCase()}</strong>
       </div>
     </div>
   `;
