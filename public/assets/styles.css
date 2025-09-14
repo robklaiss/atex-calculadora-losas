@@ -1413,10 +1413,24 @@ button:disabled {
     --circle-size: 36px;
     --gap: 8px; /* equals 0.5rem */
     --connector: var(--gap);
-    justify-content: space-between;
+    justify-content: center; /* keep fixed gaps so connectors align */
+    flex-wrap: nowrap; /* keep dots on one line */
   }
   .step-number {
     min-width: var(--circle-size);
     font-size: 0.9rem;
+  }
+}
+
+/* Extra small devices: tighten spacing slightly */
+@media (max-width: 400px) {
+  .step-indicator {
+    --circle-size: 32px;
+    --gap: 6px;
+    --connector: var(--gap);
+  }
+  .step-number {
+    min-width: var(--circle-size);
+    font-size: 0.85rem;
   }
 }
