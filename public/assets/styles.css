@@ -154,12 +154,12 @@ h1{text-align:center}
   justify-content: center;
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #F48120, #e0761c);
   color: white;
   border-radius: 50%;
   font-weight: bold;
   font-size: 1.2rem;
-  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 4px 8px rgba(244, 129, 32, 0.3);
 }
 
 .ahorros-section {
