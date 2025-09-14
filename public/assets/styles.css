@@ -216,14 +216,14 @@ h1{text-align:center}
   color: #ffffff;
 }
 
-/* Ensure labels and details are white on orange tiles */
+/* Ensure all text is white on orange tiles for better contrast */
 .ahorro-item.hormigon .ahorro-label,
 .ahorro-item.hormigon .ahorro-detalle,
 .ahorro-item.acero .ahorro-label,
 .ahorro-item.acero .ahorro-detalle,
 .ahorro-item.hormigon .ahorro-porcentaje,
 .ahorro-item.acero .ahorro-porcentaje {
-  color: #6c757d;
+  color: #ffffff;
 }
 
 .ahorro-label {
