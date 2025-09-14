@@ -762,7 +762,7 @@ function mostrarComparacionAtexMacizo(resultado) {
     
     <div class="comparacion-grid">
       <div class="sistema-card macizo">
-        <h3>🏗️ Losa Maciza</h3>
+        <h3>Losa Maciza</h3>
         <div class="valores">
           <div class="valor-item">
             <span class="label">Hormigón:</span>
@@ -784,7 +784,7 @@ function mostrarComparacionAtexMacizo(resultado) {
       </div>
       
       <div class="sistema-card atex">
-        <h3>⚡ Sistema Atex</h3>
+        <h3>Sistema Atex</h3>
         <div class="valores">
           <div class="valor-item">
             <span class="label">Hormigón:</span>
