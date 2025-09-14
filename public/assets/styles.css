@@ -192,13 +192,13 @@ h1{text-align:center}
 }
 
 .ahorro-item.hormigon {
-  background: linear-gradient(135deg, #cce5ff 0%, #b3d9ff 100%);
-  border-color: #b3d9ff;
+  background: linear-gradient(135deg, #F48120 0%, #e0761c 100%);
+  border-color: #e0761c;
 }
 
 .ahorro-item.acero {
-  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-  border-color: #ffeaa7;
+  background: linear-gradient(135deg, #F48120 0%, #e0761c 100%);
+  border-color: #e0761c;
 }
 
 .ahorro-porcentaje {
@@ -209,11 +209,19 @@ h1{text-align:center}
 }
 
 .ahorro-item.hormigon .ahorro-porcentaje {
-  color: #007bff;
+  color: #ffffff;
 }
 
 .ahorro-item.acero .ahorro-porcentaje {
-  color: #fd7e14;
+  color: #ffffff;
+}
+
+/* Ensure labels and details are white on orange tiles */
+.ahorro-item.hormigon .ahorro-label,
+.ahorro-item.hormigon .ahorro-detalle,
+.ahorro-item.acero .ahorro-label,
+.ahorro-item.acero .ahorro-detalle {
+  color: #ffffff;
 }
 
 .ahorro-label {
