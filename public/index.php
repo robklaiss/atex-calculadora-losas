@@ -42,10 +42,6 @@
         <p>País donde se ejecutará la obra</p>
         <select id="zona">
           <option value="">Selecciona un país</option>
-          <option value="CO">Colombia</option>
-          <option value="PY">Paraguay</option>
-          <option value="PA">Panamá</option>
-          <option value="DO">República Dominicana</option>
         </select>
         <div id="zonaWarning" class="warning-message" style="display: none;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="#dc3545">

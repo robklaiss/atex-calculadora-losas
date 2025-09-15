@@ -1,0 +1,2 @@
+# Prefer landing page over wizard by default
+DirectoryIndex index.html index.php

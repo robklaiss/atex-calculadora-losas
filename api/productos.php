@@ -22,15 +22,26 @@ try {
         'BR' => 'Brasil',
         'CL' => 'Chile',
         'UY' => 'Uruguay',
+        'CO' => 'Colombia',
+        'PA' => 'Panamá',
+        'DO' => 'República Dominicana',
     ];
     $pais_param = $pais;
     if (isset($map[strtoupper($pais)])) {
         $pais_param = $map[strtoupper($pais)];
     }
+    // Validate that pais exists in `paises` table
+    $chk = $pdo->prepare('SELECT 1 FROM paises WHERE nombre = ?');
+    $chk->execute([$pais_param]);
+    if (!$chk->fetchColumn()) {
+        Response::error('País inválido');
+        exit;
+    }
 
     $sql = 'SELECT p.id, p.nombre, p.altura_mm, p.familia, p.direccionalidad, p.requiere_anulador_nervio, p.heq_mm
             FROM productos p
             JOIN disponibilidad d ON d.producto_id = p.id
+            JOIN paises ps ON ps.nombre = d.pais
             WHERE d.pais = :pais AND p.direccionalidad = :dir AND p.tipo = :tipo
             ORDER BY p.nombre';
     $stmt = $pdo->prepare($sql);

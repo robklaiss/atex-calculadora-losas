@@ -66,5 +66,32 @@ class Database {
                 nombre TEXT PRIMARY KEY
             )'
         );
+
+        // Leads: store contact submissions with full payloads
+        $db->exec(
+            'CREATE TABLE IF NOT EXISTS leads (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                created_at TEXT NOT NULL,
+                nombre TEXT,
+                apellido TEXT,
+                empresa TEXT,
+                email TEXT,
+                telefono TEXT,
+                mensaje TEXT,
+                producto TEXT,
+                producto_id TEXT,
+                pais TEXT,
+                uso TEXT,
+                direccionalidad TEXT,
+                tipo TEXT,
+                ejeX REAL,
+                ejeY REAL,
+                losa_pct REAL,
+                wizard_json TEXT NOT NULL,
+                producto_json TEXT NOT NULL,
+                comparacion_json TEXT,
+                payload_json TEXT NOT NULL
+            )'
+        );
     }
 }

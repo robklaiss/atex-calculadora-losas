@@ -1,0 +1,446 @@
+.w-layout-layout {
+  grid-row-gap: 20px;
+  grid-column-gap: 20px;
+  grid-auto-columns: 1fr;
+  justify-content: center;
+  padding: 20px;
+}
+
+.w-layout-cell {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  display: flex;
+}
+
+.w-layout-blockcontainer {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+@media screen and (max-width: 991px) {
+  .w-layout-blockcontainer {
+    max-width: 728px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .w-layout-blockcontainer {
+    max-width: none;
+  }
+}
+
+.body {
+  background-color: #e1dfdd;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform .5s;
+  display: flex;
+}
+
+.container {
+  background-image: linear-gradient(#fff, #e2f7ff);
+  border-radius: 35px;
+  width: 95%;
+  max-width: 1100px;
+  height: auto;
+  margin-left: 40px;
+  margin-right: 40px;
+  position: relative;
+}
+
+.copyright {
+  text-align: center;
+}
+
+.text-block {
+  text-align: center;
+  width: 70%;
+  margin-top: 20px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.quick-stack {
+  padding: 0;
+}
+
+.cell {
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.mister-atex-imagen {
+  width: auto;
+  position: relative;
+}
+
+.enlace {
+  background-color: #fff;
+  border: 1px solid #e6e7e8;
+  border-radius: 12px;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  margin-bottom: 20px;
+  padding: 15px 20px;
+  text-decoration: none;
+  transition: box-shadow .5s, transform .5s;
+  display: flex;
+  transform: translate(0);
+  box-shadow: 0 1px 3px #0003;
+}
+
+.enlace:hover {
+  transform: translate(0, -4px);
+  box-shadow: 0 12px 15px #0003;
+}
+
+.textos-botones {
+  color: #242424;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+.cell-2 {
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  padding-left: 40px;
+}
+
+.atex-logo {
+  width: 70%;
+  margin-bottom: 45px;
+}
+
+.espaciador-20px {
+  width: 100%;
+  height: 20px;
+}
+
+.div-block {
+  display: flex;
+}
+
+.contenedor {
+  width: 900px;
+}
+
+.celda-logo-botones {
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px;
+}
+
+.celda-mister-atex {
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 20px;
+  padding-right: 20px;
+}
+
+.grilla-landing {
+  background-image: linear-gradient(#fff, #e2f7ff);
+  border-radius: 25px;
+  padding: 0;
+}
+
+.flecha-naranja {
+  margin-left: 0;
+}
+
+.body-2 {
+  background-color: #000;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.container-2 {
+  width: 90%;
+  max-width: none;
+  position: relative;
+}
+
+.image {
+  display: none;
+}
+
+.image-2 {
+  z-index: 2;
+  margin-top: 0;
+  display: block;
+  position: relative;
+  inset: 0% 0% auto auto;
+}
+
+.cerrar {
+  z-index: 2;
+  background-color: #fff0;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  padding-top: 0;
+  display: flex;
+  position: absolute;
+  inset: 0% 0% auto auto;
+}
+
+.aviso-girar-phono, .button {
+  display: none;
+}
+
+@media screen and (max-width: 991px) {
+  .body {
+    display: flex;
+  }
+
+  .container {
+    grid-column-gap: 16px;
+    grid-row-gap: 16px;
+    background-image: linear-gradient(#fff, #e2f7ff);
+    flex: 1;
+    grid-template-rows: auto auto;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-columns: 1fr;
+    margin-left: 20px;
+    margin-right: 20px;
+    display: grid;
+    position: relative;
+  }
+
+  .text-block {
+    margin-bottom: 40px;
+  }
+
+  .quick-stack {
+    height: auto;
+    padding: 0;
+    position: relative;
+  }
+
+  .cell {
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .mister-atex-imagen {
+    width: 70%;
+  }
+
+  .enlace {
+    margin-bottom: 20px;
+  }
+
+  .cell-2 {
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  .atex-logo {
+    width: 40%;
+    margin-bottom: 0;
+  }
+
+  .espaciador-20px {
+    height: 30px;
+  }
+
+  .div-block {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .contenedor {
+    background-image: linear-gradient(#fff, #e2f7ff);
+    border-radius: 30px;
+    width: 70%;
+    margin-top: 20px;
+  }
+
+  .celda-logo-botones {
+    justify-content: flex-start;
+    align-items: center;
+    padding: 40px 20px 0;
+  }
+
+  .celda-mister-atex {
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 0;
+    padding-right: 0;
+  }
+
+  .grilla-landing {
+    padding: 0;
+  }
+
+  .body-2 {
+    flex-flow: column;
+  }
+
+  .image {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    display: block;
+  }
+
+  .aviso-girar-phono {
+    background-color: #fff;
+    border-radius: 10px;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: auto;
+    margin-top: 20px;
+    padding: 10px 20px;
+    display: flex;
+  }
+
+  .paragraph {
+    text-align: center;
+  }
+
+  .rive {
+    display: block;
+  }
+
+  .rive-2 {
+    width: 100%;
+    height: 95px;
+  }
+
+  .button {
+    color: #fff;
+    background-color: #000;
+    border: 1px solid #fff;
+    border-radius: 3px;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .mister-atex-imagen {
+    width: 70%;
+  }
+
+  .atex-logo {
+    width: 50%;
+  }
+
+  .contenedor {
+    width: 80%;
+  }
+
+  .celda-mister-atex {
+    padding-right: 0;
+  }
+
+  .container-2 {
+    width: 95%;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .body {
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .mister-atex-imagen {
+    width: 80%;
+  }
+
+  .enlace {
+    width: auto;
+  }
+
+  .atex-logo {
+    width: 70%;
+  }
+
+  .espaciador-20px {
+    height: 30px;
+  }
+
+  .contenedor {
+    width: 90%;
+    margin-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: relative;
+  }
+
+  .celda-logo-botones {
+    padding: 40px 10px 0;
+  }
+
+  .celda-mister-atex {
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 0;
+    padding-right: 0;
+  }
+
+  .grilla-landing {
+    position: relative;
+  }
+
+  .flecha-naranja {
+    margin-left: 0;
+  }
+
+  .container-2 {
+    width: 95%;
+  }
+
+  .image {
+    margin-bottom: 60px;
+  }
+
+  .cerrar.w--current {
+    width: 50px;
+    height: 50px;
+  }
+
+  .aviso-girar-phono {
+    border-radius: 5px;
+    width: auto;
+    margin-top: 20px;
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+
+  .paragraph {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+}
+
+#w-node-f79faeb7-e88f-f601-0415-bc79476ce852-6fe15b05 {
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media screen and (max-width: 991px) {
+  #w-node-f79faeb7-e88f-f601-0415-bc79476ce852-6fe15b05 {
+    grid-template-rows: auto;
+    grid-template-columns: 1fr;
+  }
+}
+
+

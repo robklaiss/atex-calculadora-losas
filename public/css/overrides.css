@@ -1,0 +1,80 @@
+/* Persistent overrides that survive Webflow re-exports
+   Scope: Landing page buttons should span full width
+   Note: Keep this file outside Webflow-managed CSS to avoid being overwritten.
+*/
+
+/* Make buttons full-width and align content edge-to-edge */
+.celda-logo-botones .enlace.w-inline-block {
+  display: flex !important;           /* override inline-block from Webflow */
+  width: 100% !important;             /* span full container width */
+  box-sizing: border-box;             /* include padding in width */
+  align-items: center;                /* vertical centering */
+  justify-content: space-between;     /* text left, arrow right */
+}
+
+/* Ensure the arrow hugs the right edge */
+.celda-logo-botones .enlace.w-inline-block .flecha-naranja {
+  margin-left: auto;
+}
+
+/* Optional: ensure buttons stack nicely with spacing if needed */
+.celda-logo-botones .enlace.w-inline-block + .enlace.w-inline-block {
+  margin-top: 12px;
+}
+
+/* Increase spacer height */
+.espaciador-20px {
+  height: 40px !important;
+}
+
+/* Video page: show rotate message below video on mobile portrait */
+.aviso-girar-phono {
+  display: none; /* hidden by default */
+}
+
+@media (max-width: 767px) and (orientation: portrait) {
+  .aviso-girar-phono {
+    display: block;          /* shown in portrait on mobile */
+    margin-top: 12px;        /* sits below the video */
+    background: #fff;        /* restore white background */
+    color: #333;             /* readable text on white */
+    text-align: center;
+    padding: 12px;           /* small cushion */
+    border: 1px solid #eee;  /* subtle separation */
+    border-radius: 8px;      /* soft corners */
+  }
+}
+
+@media (max-width: 767px) and (orientation: landscape) {
+  .aviso-girar-phono { display: none !important; }
+  /* Hide the video page's top white logo in landscape */
+  .body-2 img[src$="atex_latam_logo-blanco.png"],
+  .body-2 img[src*="atex_latam_logo-blanco"] { display: none !important; }
+}
+
+/* Also hide the video page's top white logo in ANY landscape (no width limit) */
+@media (orientation: landscape) {
+  .body-2 img.image { display: none !important; }
+}
+
+/* Utility: force-hide via JS when needed */
+.hide-landscape { display: none !important; }
+
+/* Landscape hint below the video */
+.nota-landscape {
+  display: none;           /* default hidden */
+  margin-top: 8px;         /* 8px below the video */
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+.nota-landscape svg {
+  width: 1em;             /* match text size */
+  height: 1em;
+  vertical-align: -0.15em; /* align with baseline */
+  margin: 0 4px;           /* small gap around icon */
+  display: inline-block;
+}
+@media (orientation: landscape) {
+  .nota-landscape { display: block; }
+}

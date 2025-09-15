@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:image" content="/atex-latam-meta-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="/atex-latam-meta-image.png">
     <title>Hablemos sobre su proyecto - Atex Losas</title>
     <link rel="stylesheet" href="assets/styles.css">
     <link href="/atex-latam-favicon.png?1" rel="icon" type="image/png">
@@ -259,6 +265,8 @@
             const altura = params.get('altura');
             const tipo = params.get('tipo');
             const direccional = params.get('direccional');
+            // Optional product id
+            const producto_id = params.get('producto_id');
             
             // If we have product info, show it
             if (nombre) {
@@ -276,6 +284,34 @@
                     productImage.src = imagePath;
                     productImage.alt = `Losa ${isBidireccional ? 'Bidireccional' : 'Unidireccional'}`;
                 }
+            }
+            
+            // Build payload for DB: try full contactPayload, otherwise reconstruct from URL/session
+            let contactPayload = null;
+            try {
+                const stored = sessionStorage.getItem('contactPayload');
+                if (stored) contactPayload = JSON.parse(stored);
+            } catch (e) { /* ignore */ }
+            if (!contactPayload) {
+                let last = {};
+                try { last = JSON.parse(sessionStorage.getItem('lastSearchParams') || '{}'); } catch (e) {}
+                const wizard = {
+                    pais: params.get('pais') || last.pais || null,
+                    direccionalidad: params.get('direccionalidad') || (direccional ? (direccional.toLowerCase().includes('bi') ? 'bi' : 'uni') : (last.direccionalidad || null)),
+                    tipo: params.get('tipo') || last.tipo || null,
+                    uso: params.get('uso') || last.uso || null,
+                    cargaViva: params.get('cargaViva') || last.cargaViva || null,
+                    ejeX: params.get('ejeX') || last.ejeX || null,
+                    ejeY: params.get('ejeY') || last.ejeY || null,
+                    losa_pct: last.losa_pct || 100
+                };
+                const productoObj = {
+                    id: producto_id || null,
+                    nombre: nombre || null,
+                    altura_mm: altura ? (parseFloat(altura) * 10) : null,
+                    tipo: (tipo && tipo.toLowerCase().includes('post')) ? 'post' : (tipo ? 'convencional' : null)
+                };
+                contactPayload = { wizard, producto: productoObj, comparacion: null, timestamp: new Date().toISOString() };
             }
             
             // Handle back button
@@ -308,8 +344,8 @@
                 });
             });
             
-            // Handle form submission
-            form.addEventListener('submit', function(e) {
+            // Handle form submission: send to API as JSON (SQLite storage)
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 // Reset previous errors
@@ -332,24 +368,37 @@
                     });
                     return;
                 }
-                
-                // If all validations pass, submit the form
-                // Here you would typically send the form data to a server
-                formError.textContent = '';
-                formError.style.display = 'none';
-                
-                // Show success message
-                successMessage.textContent = '¡Gracias por su interés! Nos pondremos en contacto con usted pronto.';
-                successMessage.style.display = 'block';
-                
-                // Reset form
-                form.reset();
-                
-                // Scroll to top to show success message
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                try {
+                    const productoStr = nombre ? `${nombre}${altura ? ' - ' + altura : ''}${tipo ? ' ' + tipo : ''}` : '';
+                    const body = {
+                        nombre: document.getElementById('nombre').value.trim(),
+                        apellido: document.getElementById('apellido').value.trim(),
+                        empresa: document.getElementById('empresa').value.trim(),
+                        email: document.getElementById('email').value.trim(),
+                        telefono: document.getElementById('telefono').value.trim(),
+                        mensaje: document.getElementById('mensaje').value.trim(),
+                        producto: productoStr,
+                        payload: contactPayload
+                    };
+                    const res = await fetch('/api/lead.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    const data = await res.json().catch(() => ({ ok: false }));
+                    if (!res.ok || !data.ok) throw new Error('No se pudo guardar su solicitud');
+                    // Success UI
+                    formError.textContent = '';
+                    formError.style.display = 'none';
+                    successMessage.textContent = '¡Gracias por su interés! Nos pondremos en contacto con usted pronto.';
+                    successMessage.style.display = 'block';
+                    form.reset();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } catch (err) {
+                    formError.textContent = 'Ocurrió un error al enviar su solicitud. Intente nuevamente.';
+                    formError.style.display = 'block';
+                    console.error('Lead submit failed:', err);
+                }
             });
         });
     </script>

@@ -2,7 +2,7 @@ const apiBase = '../api';
 
 const state = {
   zona: '',
-  pais: 'PY',
+  pais: '',
   direccionalidad: 'bi',
   tipo: 'convencional',
   uso: '',
@@ -525,6 +525,27 @@ async function loadConfig(){
         saveState(); 
       });
     }
+
+    // Paises -> populate Step 1 (#zona)
+    const zona = document.querySelector('#zona');
+    if (zona) {
+      // Build options
+      const list = Array.isArray(data.paises) ? data.paises : [];
+      // Preserve selection if valid; otherwise keep placeholder and require user choice
+      const desired = (state.pais && list.includes(state.pais)) ? state.pais : '';
+      zona.innerHTML = '<option value="">Selecciona un país</option>' +
+        list.map(n => `<option value="${n}">${n}</option>`).join('');
+      if (desired) {
+        zona.value = desired;
+        // Sync state
+        state.zona = desired; state.pais = desired; saveState();
+      }
+      zona.addEventListener('change', e => {
+        state.zona = e.target.value;
+        state.pais = e.target.value;
+        saveState();
+      });
+    }
   } catch (error) {
     console.error('Error loading config:', error);
     const uso = document.querySelector('#uso');
@@ -905,6 +926,54 @@ function renderCard(item, container){
     </div>
   `;
   container.appendChild(div);
+
+  // Persist full wizard + selected product payload for the contact form
+  const contactLink = div.querySelector('a.contact-btn');
+  if (contactLink) {
+    contactLink.addEventListener('click', () => {
+      try {
+        const wizardSnapshot = {
+          pais: state.pais,
+          direccionalidad: state.direccionalidad,
+          tipo: state.tipo,
+          uso: state.uso,
+          cargaViva: state.cargaViva,
+          ejeX: state.ejeX,
+          ejeY: state.ejeY,
+          losa_pct: state.losa_pct
+        };
+
+        const productoData = {
+          id: item.id,
+          nombre: item.nombre,
+          altura_mm: item.altura_mm,
+          heq_mm: item.heq_mm,
+          heq_requerido_mm: item.heq_requerido_mm,
+          inercia_cm4: item.inercia_cm4,
+          volumen_maciza_m3_m2: item.volumen_maciza_m3_m2,
+          acero_maciza_kg_m2: item.acero_maciza_kg_m2,
+          volumen_atex_m3_m2: item.volumen_atex_m3_m2,
+          acero_atex_kg_m2: item.acero_atex_kg_m2,
+          ahorro_concreto_pct: item.ahorro_concreto_pct,
+          ahorro_acero_pct: item.ahorro_acero_pct,
+          estado: item.estado,
+          requiere_anulador_nervio: !!item.requiere_anulador_nervio,
+          tipo: item.tipo
+        };
+
+        const payload = {
+          wizard: wizardSnapshot,
+          producto: productoData,
+          comparacion: state.comparacionAtexMacizo || null,
+          timestamp: new Date().toISOString()
+        };
+
+        sessionStorage.setItem('contactPayload', JSON.stringify(payload));
+      } catch (err) {
+        console.error('Failed to store contact payload', err);
+      }
+    });
+  }
 }
 
 function getEstadoDetails(item) {

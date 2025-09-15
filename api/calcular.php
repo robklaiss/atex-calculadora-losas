@@ -197,24 +197,56 @@ function buscarInerciaEnMetadata(string $metadata_json, int $altura_mm): ?float 
     if (!is_array($table)) return null;
     
     // Buscar fila con altura coincidente
+    // Primero buscar por "Altura do Molde" (más específico), luego por "Altura Total"
+    $candidatos = [];
+    
     foreach ($table as $row) {
         if (!is_array($row)) continue;
         
-        // Buscar campo de altura - usar newlines reales, no literales
-        $D_cm = null;
-        if (isset($row["Altura \nTotal"])) {
-            $D_cm = parseLocaleFloat($row["Altura \nTotal"]);
+        // Buscar por "Altura do Molde" primero (más específico para el molde real)
+        $altura_molde_cm = null;
+        if (isset($row["Altura \ndo \nMolde"])) {
+            $altura_molde_cm = parseLocaleFloat($row["Altura \ndo \nMolde"]);
         }
         
-        if ($D_cm !== null && abs($D_cm - $altura_cm_target) < 0.1) {
-            // Buscar inercia - usar newlines reales
-            if (isset($row["Inércia"])) {
-                $inercia = parseLocaleFloat($row["Inércia"]);
-                if ($inercia !== null && $inercia > 0) {
-                    return $inercia; // cm⁴
-                }
+        // Buscar por "Altura Total" como alternativa
+        $altura_total_cm = null;
+        if (isset($row["Altura \nTotal"])) {
+            $altura_total_cm = parseLocaleFloat($row["Altura \nTotal"]);
+        }
+        
+        // Verificar si alguna altura coincide con el target
+        $altura_encontrada = null;
+        $prioridad = 0;
+        
+        if ($altura_molde_cm !== null && abs($altura_molde_cm - $altura_cm_target) < 0.1) {
+            $altura_encontrada = $altura_molde_cm;
+            $prioridad = 1; // Mayor prioridad para altura del molde
+        } elseif ($altura_total_cm !== null && abs($altura_total_cm - $altura_cm_target) < 0.1) {
+            $altura_encontrada = $altura_total_cm;
+            $prioridad = 2; // Menor prioridad para altura total
+        }
+        
+        if ($altura_encontrada !== null && isset($row["Inércia"])) {
+            $inercia = parseLocaleFloat($row["Inércia"]);
+            if ($inercia !== null && $inercia > 0) {
+                $candidatos[] = [
+                    'inercia' => $inercia,
+                    'prioridad' => $prioridad,
+                    'altura_molde' => $altura_molde_cm,
+                    'altura_total' => $altura_total_cm
+                ];
             }
         }
+    }
+    
+    // Ordenar candidatos por prioridad (1 = mayor prioridad)
+    if (!empty($candidatos)) {
+        usort($candidatos, function($a, $b) {
+            return $a['prioridad'] - $b['prioridad'];
+        });
+        
+        return $candidatos[0]['inercia']; // Retornar el de mayor prioridad
     }
     
     return null;

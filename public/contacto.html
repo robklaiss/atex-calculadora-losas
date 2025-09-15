@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:image" content="/atex-latam-meta-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="/atex-latam-meta-image.png">
     <title>Solicitar información - Atex Losas</title>
     <link rel="stylesheet" href="assets/styles.css">
     <link href="/atex-latam-favicon.png?1" rel="icon" type="image/png">
@@ -227,6 +233,7 @@
                     </div>
                     
                     <input type="hidden" id="producto" name="producto">
+                    <input type="hidden" id="payload" name="payload">
                     
                     <div class="form-actions">
                         <a href="#" id="backToResults" class="btn-back">← Volver</a>
@@ -240,7 +247,7 @@
     </div>
 
     <script>
-        // Get URL parameters
+        // Get URL parameters and prepare payload for submission
         document.addEventListener('DOMContentLoaded', function() {
             const params = new URLSearchParams(window.location.search);
             const nombre = params.get('nombre') || 'Producto seleccionado';
@@ -270,6 +277,47 @@
             
             // Store in session storage
             sessionStorage.setItem('lastSearchParams', JSON.stringify(searchParams));
+
+            // Prepare contact payload (wizard + selected product + comparison) for DB
+            let contactPayload = null;
+            try {
+                const stored = sessionStorage.getItem('contactPayload');
+                if (stored) {
+                    contactPayload = JSON.parse(stored);
+                }
+            } catch (e) { /* ignore */ }
+
+            // Fallback: reconstruct minimal payload if none exists (e.g., direct open)
+            if (!contactPayload) {
+                const wizard = Object.assign({
+                    pais: params.get('pais') || searchParams.pais || null,
+                    direccionalidad: (params.get('direccionalidad') || (direccional.toLowerCase().includes('bi') ? 'bi' : 'uni')),
+                    tipo: params.get('tipo') || null,
+                    uso: params.get('uso') || searchParams.uso || null,
+                    cargaViva: params.get('cargaViva') || searchParams.cargaViva || null,
+                    ejeX: params.get('ejeX') || searchParams.ejeX || null,
+                    ejeY: params.get('ejeY') || searchParams.ejeY || null,
+                    losa_pct: searchParams.losa_pct || 100
+                }, {});
+                const productoObj = {
+                    id: params.get('producto_id') || null,
+                    nombre: nombre,
+                    altura_mm: altura ? parseFloat(altura) * 10 : null,
+                    tipo: tipo && tipo.toLowerCase().includes('post') ? 'post' : 'convencional'
+                };
+                contactPayload = {
+                    wizard,
+                    producto: productoObj,
+                    comparacion: null,
+                    timestamp: new Date().toISOString()
+                };
+            }
+
+            // Put payload JSON into hidden field for reference
+            const payloadInput = document.getElementById('payload');
+            if (payloadInput) {
+                try { payloadInput.value = JSON.stringify(contactPayload); } catch (e) {}
+            }
             
             // Set product info
             document.getElementById('productName').textContent = nombre;
@@ -330,8 +378,8 @@
                 }
             });
             
-            // Handle form submission
-            form.addEventListener('submit', function(e) {
+            // Handle form submission: send to API as JSON (SQLite storage)
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 // Reset previous errors
@@ -354,30 +402,42 @@
                     });
                     return;
                 }
-                
-                // If all validations pass, submit the form
-                // Here you would typically send the form data to a server
-                formError.textContent = '';
-                formError.style.display = 'none';
-                
-                // Show success message
-                const successMessage = document.getElementById('successMessage');
-                successMessage.textContent = '¡Gracias por su interés! Nos pondremos en contacto con usted pronto.';
-                successMessage.style.display = 'block';
-                
-                // Reset form
-                form.reset();
-                
-                // Scroll to top to show success message
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-                
-                // Optionally redirect after submission
-                // setTimeout(() => {
-                //     window.location.href = 'index.php';
-                // }, 3000);
+                try {
+                    const payloadJson = document.getElementById('payload')?.value || sessionStorage.getItem('contactPayload') || '{}';
+                    const payload = JSON.parse(payloadJson);
+                    const body = {
+                        nombre: document.getElementById('nombre').value.trim(),
+                        apellido: document.getElementById('apellido').value.trim(),
+                        empresa: document.getElementById('empresa').value.trim(),
+                        email: document.getElementById('email').value.trim(),
+                        telefono: document.getElementById('telefono').value.trim(),
+                        mensaje: document.getElementById('mensaje').value.trim(),
+                        producto: document.getElementById('producto').value,
+                        payload
+                    };
+                    const res = await fetch('/api/lead.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    const data = await res.json().catch(() => ({ ok: false }));
+                    if (!res.ok || !data.ok) {
+                        throw new Error(data.message || 'No se pudo guardar su solicitud.');
+                    }
+                    // Success UI
+                    formError.textContent = '';
+                    formError.style.display = 'none';
+                    const successMessage = document.getElementById('successMessage');
+                    successMessage.textContent = '¡Gracias por su interés! Nos pondremos en contacto con usted pronto.';
+                    successMessage.style.display = 'block';
+                    form.reset();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    // Optionally: sessionStorage.removeItem('contactPayload');
+                } catch (err) {
+                    formError.textContent = 'Ocurrió un error al enviar su solicitud. Intente nuevamente.';
+                    formError.style.display = 'block';
+                    console.error('Lead submit failed:', err);
+                }
             });
         });
     </script>
