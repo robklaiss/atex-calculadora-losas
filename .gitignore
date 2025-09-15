@@ -1,2 +1,57 @@
-# Ignore video files in public/videos/
+# Ignore video files in public/videos/ and /video
 public/videos/
+video/
+
+# System Files
+.DS_Store
+*.log
+*.mbtree
+
+# IDE specific files
+.idea/
+.vscode/
+*.code-workspace
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build directories
+/node_modules/
+/dist/
+/build/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local development
+.cache/
+.sass-cache/
+*.local
+
+# Editor directories and files
+.idea
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
