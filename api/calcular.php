@@ -155,7 +155,9 @@ function buscarVolumenEnMetadata(string $metadata_json, int $altura_mm): ?float 
     
     if (!is_array($table)) return null;
     
-    // Buscar fila con altura coincidente
+    // Collect all matching candidates with priority
+    $candidates = [];
+    
     foreach ($table as $row) {
         if (!is_array($row)) continue;
         
@@ -165,15 +167,61 @@ function buscarVolumenEnMetadata(string $metadata_json, int $altura_mm): ?float 
             $D_cm = parseLocaleFloat($row["Altura \nTotal"]);
         }
         
-        if ($D_cm !== null && abs($D_cm - $altura_cm_target) < 0.1) {
-            // Buscar volumen - usar newlines reales
-            if (isset($row["Volume\nde \nConcreto"])) {
-                $vol = parseLocaleFloat($row["Volume\nde \nConcreto"]);
-                if ($vol !== null && $vol > 0) {
-                    return $vol; // m³/m²
-                }
+        // Also check if this matches molde height + slab thickness pattern
+        $altura_molde_cm = null;
+        $espessura_lamina_cm = null;
+        $altura_molde_str = $row["Altura \ndo \nMolde"] ?? '';
+        $espessura_lamina_str = $row["Espessura \nda Lâmina"] ?? '';
+        
+        if (!empty(trim($altura_molde_str))) {
+            $altura_molde_cm = parseLocaleFloat($altura_molde_str);
+        }
+        if (!empty(trim($espessura_lamina_str))) {
+            $espessura_lamina_cm = parseLocaleFloat($espessura_lamina_str);
+        }
+        
+        $priority = 0;
+        $match_found = false;
+        
+        // For products, altura_mm represents the molde height, not total height
+        // We need to find the row where molde height matches altura_mm OR
+        // where total height = molde height + slab thickness
+        
+        // Priority 1: Direct match by molde height
+        if ($altura_molde_cm !== null && $altura_molde_cm > 0 && abs($altura_molde_cm - $altura_cm_target) < 0.1) {
+            $match_found = true;
+            $priority = 1; // Highest priority
+        }
+        // Priority 2: Calculate expected total height (molde + 5cm slab) and match
+        elseif ($D_cm !== null && abs($D_cm - ($altura_cm_target + 5)) < 0.1) {
+            $match_found = true;
+            $priority = 2; // Match by calculated total height
+        }
+        // Priority 3: Fallback to direct total height match (legacy)
+        elseif ($D_cm !== null && abs($D_cm - $altura_cm_target) < 0.1) {
+            $match_found = true;
+            $priority = 3; // Lowest priority
+        }
+        
+        if ($match_found && isset($row["Volume\nde \nConcreto"])) {
+            $vol = parseLocaleFloat($row["Volume\nde \nConcreto"]);
+            if ($vol !== null && $vol > 0) {
+                $candidates[] = [
+                    'volume' => $vol,
+                    'priority' => $priority,
+                    'molde' => $altura_molde_cm,
+                    'total' => $D_cm
+                ];
             }
         }
+    }
+    
+    // Return the highest priority match
+    if (!empty($candidates)) {
+        usort($candidates, function($a, $b) {
+            return $a['priority'] - $b['priority']; // Lower number = higher priority
+        });
+        return $candidates[0]['volume'];
     }
     
     return null;

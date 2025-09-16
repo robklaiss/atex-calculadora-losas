@@ -36,9 +36,9 @@
 
     <!-- Step Cards -->
     <div class="wizard-steps">
-      <!-- Step 1: Zona -->
+      <!-- Step 1: Norma (país) -->
       <div class="step-card active" data-step="1">
-        <h3>Zona</h3>
+        <h3>Norma (país)</h3>
         <p>País donde se ejecutará la obra</p>
         <select id="zona">
           <option value="">Selecciona un país</option>
@@ -82,27 +82,15 @@
         </script>
       </div>
 
-      <!-- Step 2: Direccionalidad -->
+      <!-- Step 2: Tipo de losa -->
       <div class="step-card" data-step="2">
-        <h3>Direccionalidad</h3>
-        <p>Selecciona el tipo de direccionalidad de la losa</p>
-        <select id="direccionalidad">
-          <option value="bi">Bidireccional</option>
-          <option value="uni">Unidireccional</option>
-        </select>
-        <div class="step-actions">
-          <button class="btn-prev" onclick="prevStep()">Anterior</button>
-          <button class="btn-next" onclick="nextStep()">Siguiente</button>
-        </div>
-      </div>
-
-      <!-- Step 3: Tipo -->
-      <div class="step-card" data-step="3">
         <h3>Tipo de losa</h3>
-        <p>Elige entre losa convencional o post-tensada</p>
-        <select id="tipo">
-          <option value="convencional">Convencional</option>
-          <option value="post">Post-tensado</option>
+        <p>Selecciona el tipo de losa</p>
+        <select id="tipoLosa">
+          <option value="bidireccional">Bidireccional</option>
+          <option value="unidireccional">Unidireccional</option>
+          <option value="casetonada">Casetonada</option>
+          <option value="casetonada_postensada">Casetonada postensada</option>
         </select>
         <div class="step-actions">
           <button class="btn-prev" onclick="prevStep()">Anterior</button>
@@ -110,9 +98,9 @@
         </div>
       </div>
 
-      <!-- Step 4: Uso -->
-      <div class="step-card" data-step="4">
-        <h3>Uso de la losa</h3>
+      <!-- Step 3: Carga viva -->
+      <div class="step-card" data-step="3">
+        <h3>Carga viva de la losa</h3>
         <p>Selecciona el uso predefinido o ingresa una carga viva personalizada</p>
         <div class="grid-2">
           <label>Predefinido
@@ -124,19 +112,29 @@
             <input type="number" id="cargaViva" step="0.1" min="0" placeholder="ej: 2.5" />
           </label>
         </div>
+        <div id="cargaVivaDisplay" class="carga-viva-display" style="display: none;">
+          <p><strong>Valor predefinido:</strong> <span id="cargaVivaValor"></span> kN/m²</p>
+        </div>
+        <div id="customLoadWarning" class="warning-message" style="display: none;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="#dc3545">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <span>¿Está seguro de cambiar este parámetro?</span>
+          <label><input type="checkbox" id="confirmCustomLoad"> Sí, estoy seguro</label>
+        </div>
         <div class="step-actions">
           <button class="btn-prev" onclick="prevStep()">Anterior</button>
           <button class="btn-next" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
 
-      <!-- Step 5: Geometría -->
-      <div class="step-card" data-step="5">
-        <h3>Geometría</h3>
-        <p>Ingresa las dimensiones de la losa en metros</p>
+      <!-- Step 4: Distancia máxima de apoyo -->
+      <div class="step-card" data-step="4">
+        <h3>Distancia máxima de apoyo</h3>
+        <p>Ingresa las distancias máximas de apoyo en metros</p>
         <div class="grid-2">
-          <label>Eje X (m) <input type="number" id="ejeX" step="0.01" min="0" placeholder="ej: 1.5"></label>
-          <label>Eje Y (m) <input type="number" id="ejeY" step="0.01" min="0" placeholder="ej: 2.5"></label>
+          <label>X (m) <input type="number" id="ejeX" step="0.01" min="0" placeholder="ej: 6.0"></label>
+          <label>Y (m) <input type="number" id="ejeY" step="0.01" min="0" placeholder="ej: 8.0"></label>
         </div>
         <div id="dimensionWarning" class="warning-message" style="display: none;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="#dc3545">
@@ -150,15 +148,35 @@
         </div>
       </div>
 
-      <!-- Step 6: Carga de losa -->
+      <!-- Step 5: Dimensión total de la losa -->
+      <div class="step-card" data-step="5">
+        <h3>Dimensión total de la losa</h3>
+        <p>Ingresa las dimensiones totales de la losa en metros</p>
+        <div class="grid-2">
+          <label>Largo (m) <input type="number" id="largoTotal" step="0.01" min="0" placeholder="ej: 12.0"></label>
+          <label>Ancho (m) <input type="number" id="anchoTotal" step="0.01" min="0" placeholder="ej: 15.0"></label>
+        </div>
+        <div id="totalDimensionWarning" class="warning-message" style="display: none;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="#dc3545">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <span>Por favor completa ambos campos de dimensión total antes de continuar.</span>
+        </div>
+        <div class="step-actions">
+          <button class="btn-prev" onclick="prevStep()">Anterior</button>
+          <button class="btn-next" onclick="nextStep()">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Step 6: Porcentaje de área casetonada -->
       <div class="step-card" data-step="6">
-        <h3>Carga de losa</h3>
-        <p>Especifica el porcentaje de carga de la losa (normalmente 100%)</p>
+        <h3>Porcentaje de área casetonada</h3>
+        <p>Especifica el porcentaje de área casetonada (por defecto 90%)</p>
         <div class="pct-container">
           <div class="pct-row">
             <button type="button" class="slider-arrow" id="losa_dec" aria-label="Disminuir">&#8249;</button>
             <div class="pct-input">
-              <input type="number" id="losa_pct" min="0" max="100" step="1" value="100" inputmode="numeric" />
+              <input type="number" id="losa_pct" min="0" max="100" step="1" value="90" inputmode="numeric" />
               <span class="pct-suffix">%</span>
             </div>
             <button type="button" class="slider-arrow" id="losa_inc" aria-label="Aumentar">&#8250;</button>
@@ -185,8 +203,8 @@
       </div>
       <div class="filter-group">
         <select id="filtroEstado" class="filter-select">
-          <option value="todas">Estado: Todos</option>
-          <option value="ok" selected>Estado: OK</option>
+          <option value="todas" selected>Estado: Todos</option>
+          <option value="ok">Estado: OK</option>
           <option value="ajustada">Estado: Ajustada</option>
           <option value="insuficiente">Estado: Insuficiente</option>
         </select>

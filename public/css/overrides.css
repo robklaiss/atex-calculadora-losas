@@ -78,3 +78,54 @@
 @media (orientation: landscape) {
   .nota-landscape { display: block; }
 }
+
+/* Wizard: Carga viva display styling */
+.carga-viva-display {
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #f8f9fa;
+  border: 1px solid #999;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+.carga-viva-display p {
+  margin: 0;
+  color: #495057;
+}
+
+/* Wizard: Custom load warning styling */
+.warning-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 4px;
+  color: #856404;
+  font-size: 14px;
+}
+
+.warning-message svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.warning-message span {
+  flex: 1;
+}
+
+.warning-message label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.warning-message input[type="checkbox"] {
+  margin: 0;
+}

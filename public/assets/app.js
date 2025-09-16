@@ -3,13 +3,14 @@ const apiBase = '../api';
 const state = {
   zona: '',
   pais: '',
-  direccionalidad: 'bi',
-  tipo: 'convencional',
+  tipoLosa: 'bidireccional',
   uso: '',
   cargaViva: '',
   ejeX: '',
   ejeY: '',
-  losa_pct: 100,
+  largoTotal: '',
+  anchoTotal: '',
+  losa_pct: 90,
   productos: [],
   candidatos: [],
   candidatosAll: [],
@@ -177,10 +178,11 @@ function showNoResultsPage() {
   // Get current parameters for display
   const ejeX = document.querySelector('#ejeX').value || 'No especificado';
   const ejeY = document.querySelector('#ejeY').value || 'No especificado';
+  const largoTotal = document.querySelector('#largoTotal').value || 'No especificado';
+  const anchoTotal = document.querySelector('#anchoTotal').value || 'No especificado';
   const uso = document.querySelector('#uso').value;
   const cargaViva = document.querySelector('#cargaViva').value;
-  const direccionalidad = document.querySelector('#direccionalidad').value;
-  const tipo = document.querySelector('#tipo').value;
+  const tipoLosa = document.querySelector('#tipoLosa').value;
   
   noResultsDiv.innerHTML = `
     <div class="no-results-card">
@@ -192,9 +194,9 @@ function showNoResultsPage() {
         <div class="parameters-section">
           <h3>📋 Parámetros utilizados:</h3>
           <ul class="parameters-list">
-            <li><strong>Dimensiones:</strong> ${ejeX} × ${ejeY} metros</li>
-            <li><strong>Direccionalidad:</strong> ${direccionalidad === 'bi' ? 'Bidireccional' : 'Unidireccional'}</li>
-            <li><strong>Tipo:</strong> ${tipo === 'convencional' ? 'Convencional' : 'Post-tensado'}</li>
+            <li><strong>Distancias de apoyo:</strong> ${ejeX} × ${ejeY} metros</li>
+            <li><strong>Dimensiones totales:</strong> ${largoTotal} × ${anchoTotal} metros</li>
+            <li><strong>Tipo de losa:</strong> ${tipoLosa}</li>
             <li><strong>Uso:</strong> ${uso || (cargaViva ? `Carga personalizada: ${cargaViva} kN/m²` : 'No especificado')}</li>
             <li><strong>País:</strong> ${state.pais}</li>
           </ul>
@@ -288,7 +290,23 @@ function nextStep() {
     state.pais = zona;
   }
   
-  if (state.currentStep === 5) {
+  if (state.currentStep === 3) {
+    // Validate custom load warning if custom load is being used
+    const cargaViva = document.querySelector('#cargaViva').value;
+    const confirmCustomLoad = document.querySelector('#confirmCustomLoad');
+    if (cargaViva && !confirmCustomLoad.checked) {
+      const warning = document.querySelector('#customLoadWarning');
+      if (warning) {
+        warning.style.display = 'flex';
+        setTimeout(() => {
+          warning.style.display = 'none';
+        }, 5000);
+      }
+      return;
+    }
+  }
+  
+  if (state.currentStep === 4) {
     const ejeX = document.querySelector('#ejeX').value;
     const ejeY = document.querySelector('#ejeY').value;
     
@@ -300,7 +318,23 @@ function nextStep() {
           warning.style.display = 'none';
         }, 3000);
       }
-      return; // Don't proceed to next step
+      return;
+    }
+  }
+  
+  if (state.currentStep === 5) {
+    const largoTotal = document.querySelector('#largoTotal').value;
+    const anchoTotal = document.querySelector('#anchoTotal').value;
+    
+    if (!largoTotal || !anchoTotal || parseFloat(largoTotal) <= 0 || parseFloat(anchoTotal) <= 0) {
+      const warning = document.querySelector('#totalDimensionWarning');
+      if (warning) {
+        warning.style.display = 'flex';
+        setTimeout(() => {
+          warning.style.display = 'none';
+        }, 3000);
+      }
+      return;
     }
   }
   
@@ -390,24 +424,26 @@ function calculateResults() {
   
   // Update state with current form values
   const zonaEl = document.querySelector('#zona');
-  const direccionalidadEl = document.querySelector('#direccionalidad');
-  const tipoEl = document.querySelector('#tipo');
+  const tipoLosaEl = document.querySelector('#tipoLosa');
   const usoEl = document.querySelector('#uso');
   const cargaVivaEl = document.querySelector('#cargaViva');
   const ejeXEl = document.querySelector('#ejeX');
   const ejeYEl = document.querySelector('#ejeY');
+  const largoTotalEl = document.querySelector('#largoTotal');
+  const anchoTotalEl = document.querySelector('#anchoTotal');
   const losaPctEl = document.querySelector('#losa_pct');
   
   if (zonaEl) {
     state.zona = zonaEl.value;
     state.pais = zonaEl.value;
   }
-  if (direccionalidadEl) state.direccionalidad = direccionalidadEl.value;
-  if (tipoEl) state.tipo = tipoEl.value;
+  if (tipoLosaEl) state.tipoLosa = tipoLosaEl.value;
   if (usoEl) state.uso = usoEl.value;
   if (cargaVivaEl) state.cargaViva = cargaVivaEl.value.replace(',', '.');
   if (ejeXEl) state.ejeX = ejeXEl.value.replace(',', '.');
   if (ejeYEl) state.ejeY = ejeYEl.value.replace(',', '.');
+  if (largoTotalEl) state.largoTotal = largoTotalEl.value.replace(',', '.');
+  if (anchoTotalEl) state.anchoTotal = anchoTotalEl.value.replace(',', '.');
   if (losaPctEl) state.losa_pct = losaPctEl.value.replace(',', '.');
   
   console.log('Updated state:', state);
@@ -471,14 +507,8 @@ function restoreState(){
     }
   }
   
-  const paisEl = document.querySelector('#pais');
-  if (paisEl && state.pais) paisEl.value = state.pais;
-  
-  const direccionalidadEl = document.querySelector('#direccionalidad');
-  if (direccionalidadEl && state.direccionalidad) direccionalidadEl.value = state.direccionalidad;
-  
-  const tipoEl = document.querySelector('#tipo');
-  if (tipoEl && state.tipo) tipoEl.value = state.tipo;
+  const tipoLosaEl = document.querySelector('#tipoLosa');
+  if (tipoLosaEl && state.tipoLosa) tipoLosaEl.value = state.tipoLosa;
   
   const usoEl = document.querySelector('#uso');
   if (usoEl && state.uso) usoEl.value = state.uso;
@@ -491,6 +521,12 @@ function restoreState(){
   
   const ejeYEl = document.querySelector('#ejeY');
   if (ejeYEl && state.ejeY) ejeYEl.value = state.ejeY;
+  
+  const largoTotalEl = document.querySelector('#largoTotal');
+  if (largoTotalEl && state.largoTotal) largoTotalEl.value = state.largoTotal;
+  
+  const anchoTotalEl = document.querySelector('#anchoTotal');
+  if (anchoTotalEl && state.anchoTotal) anchoTotalEl.value = state.anchoTotal;
   
   const losaPctEl = document.querySelector('#losa_pct');
   if (losaPctEl && state.losa_pct) losaPctEl.value = state.losa_pct;
@@ -510,7 +546,7 @@ async function loadConfig(){
       uso.innerHTML = data.usos ? 
         data.usos.map(u => 
           `<option value="${u.nombre}" ${u.nombre === state.uso ? 'selected' : ''}>
-            ${u.nombre} (${u.carga_viva_kN_m2} kN/m²)
+            ${u.nombre}
           </option>`
         ).join('') : 
         '<option value="">No hay opciones disponibles</option>';
@@ -519,9 +555,27 @@ async function loadConfig(){
         state.uso = data.usos[0].nombre;
       }
       
-      // Update state when selection changes
+      // Update state when selection changes and show predefined value
       uso.addEventListener('change', e => { 
-        state.uso = e.target.value; 
+        state.uso = e.target.value;
+        
+        // Show predefined live load value
+        const cargaVivaDisplay = document.querySelector('#cargaVivaDisplay');
+        const cargaVivaValor = document.querySelector('#cargaVivaValor');
+        
+        if (cargaVivaDisplay && cargaVivaValor && state.uso) {
+          // Find the selected uso in the data to get its carga_viva_kN_m2 value
+          const selectedUso = data.usos.find(u => u.nombre === state.uso);
+          if (selectedUso && selectedUso.carga_viva_kN_m2) {
+            cargaVivaValor.textContent = selectedUso.carga_viva_kN_m2;
+            cargaVivaDisplay.style.display = 'block';
+          } else {
+            cargaVivaDisplay.style.display = 'none';
+          }
+        } else if (cargaVivaDisplay) {
+          cargaVivaDisplay.style.display = 'none';
+        }
+        
         saveState(); 
       });
     }
@@ -571,7 +625,7 @@ function bindEvents(){
   
   // Bind input events to save state
   // Exclude 'losa_pct' here; it's handled in initSlider() for real-time updates
-  ['pais', 'direccionalidad', 'tipo', 'uso', 'cargaViva', 'ejeX', 'ejeY'].forEach(id => {
+  ['tipoLosa', 'uso', 'cargaViva', 'ejeX', 'ejeY', 'largoTotal', 'anchoTotal'].forEach(id => {
     const el = document.querySelector(`#${id}`);
     if (el) {
       el.addEventListener('change', () => {
@@ -591,6 +645,66 @@ function bindEvents(){
     state.ejeY=parseFloat(value||'0'); 
     saveState(); 
   });
+  
+  // Add event listeners for custom load warning
+  const cargaVivaEl = document.querySelector('#cargaViva');
+  const customLoadWarning = document.querySelector('#customLoadWarning');
+  const confirmCustomLoad = document.querySelector('#confirmCustomLoad');
+  const cargaVivaDisplay = document.querySelector('#cargaVivaDisplay');
+  
+  if (cargaVivaEl && customLoadWarning) {
+    cargaVivaEl.addEventListener('input', () => {
+      if (cargaVivaEl.value.trim()) {
+        customLoadWarning.style.display = 'flex';
+        // Hide the predefined value display when custom value is entered
+        if (cargaVivaDisplay) {
+          cargaVivaDisplay.style.display = 'none';
+        }
+      } else {
+        customLoadWarning.style.display = 'none';
+        if (confirmCustomLoad) confirmCustomLoad.checked = false;
+        // Show the predefined value display again when custom value is cleared
+        if (cargaVivaDisplay && state.uso) {
+          cargaVivaDisplay.style.display = 'block';
+        }
+      }
+    });
+  }
+  
+  // Add event listener for custom load confirmation checkbox
+  if (confirmCustomLoad && cargaVivaDisplay) {
+    confirmCustomLoad.addEventListener('change', () => {
+      if (confirmCustomLoad.checked && cargaVivaEl && cargaVivaEl.value.trim()) {
+        // Hide predefined value display when custom load is confirmed
+        cargaVivaDisplay.style.display = 'none';
+      } else if (!cargaVivaEl || !cargaVivaEl.value.trim()) {
+        // Show predefined value display if no custom value
+        if (state.uso) {
+          cargaVivaDisplay.style.display = 'block';
+        }
+      }
+    });
+  }
+  
+  // Add event listeners for new total dimension fields
+  const largoTotalEl = document.querySelector('#largoTotal');
+  const anchoTotalEl = document.querySelector('#anchoTotal');
+  
+  if (largoTotalEl) {
+    largoTotalEl.addEventListener('input', e => {
+      const value = e.target.value.replace(',', '.');
+      state.largoTotal = parseFloat(value || '0');
+      saveState();
+    });
+  }
+  
+  if (anchoTotalEl) {
+    anchoTotalEl.addEventListener('input', e => {
+      const value = e.target.value.replace(',', '.');
+      state.anchoTotal = parseFloat(value || '0');
+      saveState();
+    });
+  }
 }
 
 async function buscarProductos(){
@@ -598,8 +712,31 @@ async function buscarProductos(){
   console.log('Current state:', state);
   
   try {
-    // First load products
-    const params = new URLSearchParams({ pais: state.pais, direccionalidad: state.direccionalidad, tipo: state.tipo });
+    // First load products - map new tipoLosa to old API format
+    let direccionalidad, tipo;
+    switch(state.tipoLosa) {
+      case 'bidireccional':
+        direccionalidad = 'bi';
+        tipo = 'convencional';
+        break;
+      case 'unidireccional':
+        direccionalidad = 'uni';
+        tipo = 'convencional';
+        break;
+      case 'casetonada':
+        direccionalidad = 'bi';
+        tipo = 'convencional'; // All products are tipo=convencional, filter by familia later
+        break;
+      case 'casetonada_postensada':
+        direccionalidad = 'bi';
+        tipo = 'convencional'; // All products are tipo=convencional, filter by familia later
+        break;
+      default:
+        direccionalidad = 'bi';
+        tipo = 'convencional';
+    }
+    
+    const params = new URLSearchParams({ pais: state.pais, direccionalidad: direccionalidad, tipo: tipo });
     console.log('API params:', params.toString());
     
     const res = await fetch(`${apiBase}/productos.php?${params}`);
@@ -625,8 +762,31 @@ async function buscarProductos(){
       return;
     }
     
-    state.productos = data.items;
-    console.log('Products loaded:', state.productos.length);
+    // Filter products based on tipoLosa selection
+    let filteredProducts = data.items;
+    switch(state.tipoLosa) {
+      case 'bidireccional':
+        // familia=casetonada, direccionalidad=bi
+        filteredProducts = data.items.filter(p => p.familia === 'casetonada' && p.direccionalidad === 'bi');
+        break;
+      case 'unidireccional':
+        // familia=casetonada, direccionalidad=uni
+        filteredProducts = data.items.filter(p => p.familia === 'casetonada' && p.direccionalidad === 'uni');
+        break;
+      case 'casetonada':
+        // familia=casetonada, direccionalidad=bi (same as bidireccional for now)
+        filteredProducts = data.items.filter(p => p.familia === 'casetonada' && p.direccionalidad === 'bi');
+        break;
+      case 'casetonada_postensada':
+        // familia=casetonada, direccionalidad=bi, but we'll handle post-tensado in calculation
+        filteredProducts = data.items.filter(p => p.familia === 'casetonada' && p.direccionalidad === 'bi');
+        break;
+      default:
+        filteredProducts = data.items.filter(p => p.familia === 'casetonada' && p.direccionalidad === 'bi');
+    }
+    
+    state.productos = filteredProducts;
+    console.log('Products loaded and filtered:', state.productos.length, 'from', data.items.length, 'total');
     
     // Then calculate candidates
     await calcularCandidatos();
@@ -682,6 +842,7 @@ async function calcularCandidatos(){
   const resultados = [];
   for (const p of state.productos) {
     console.log('Calculating for product:', p.id);
+    // Add tipo_opcional for post-tensado calculations
     const params = new URLSearchParams({
       producto_id: p.id,
       ejeX: ejeX,
@@ -690,6 +851,11 @@ async function calcularCandidatos(){
       cargaViva: cargaViva || '',
       losa_pct: losa_pct
     });
+    
+    // Add post-tensado flag if selected
+    if (state.tipoLosa === 'casetonada_postensada') {
+      params.append('tipo_opcional', 'post');
+    }
     
     console.log('API call params:', params.toString());
     
@@ -849,19 +1015,53 @@ function renderCard(item, container){
   const alturaEquivalenteCm = Math.round(item.heq_mm / 10);
   const alturaTotalCm = Math.round(item.altura_mm / 10);
   
-  // Determine the product type image based on direccionalidad
-  const productImage = state.direccionalidad === 'bi' 
+  // Extract mold height from JSON metadata if available
+  let alturaMoldeCm = null;
+  let espessuraLaminaCm = 5; // Default slab thickness
+  let alturaRealTotalCm = alturaTotalCm;
+  
+  if (item.metadata_json) {
+    try {
+      const metadata = JSON.parse(item.metadata_json);
+      const productKey = Object.keys(metadata)[0];
+      if (metadata[productKey] && metadata[productKey].length > 2) {
+        const dataRows = metadata[productKey].slice(2); // Skip header rows
+        for (const row of dataRows) {
+          if (row["Altura do \nMolde"] && row["Espessura \nda Lâmina"] && row["Altura \nTotal"]) {
+            const moldeStr = row["Altura do \nMolde"].replace(',', '.');
+            const espessuraStr = row["Espessura \nda Lâmina"].replace(',', '.');
+            const totalStr = row["Altura \nTotal"].replace(',', '.');
+            const molde = parseFloat(moldeStr);
+            const espessura = parseFloat(espessuraStr);
+            const total = parseFloat(totalStr);
+            
+            if (!isNaN(molde) && !isNaN(espessura) && !isNaN(total) && Math.abs(total - alturaTotalCm) < 1) {
+              alturaMoldeCm = molde;
+              espessuraLaminaCm = espessura;
+              alturaRealTotalCm = total;
+              break;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Fallback to altura_mm if JSON parsing fails
+    }
+  }
+  
+  // Determine the product type image based on item direccionalidad
+  const productImage = item.direccionalidad === 'bi' 
     ? 'assets/atex-forma-bidirecional.webp' 
     : 'assets/atex-forma-unidirecional.webp';
   
   div.innerHTML = `
     <div class="card-header">
-      <h3>Molde ${item.nombre} /${item.altura_mm/10}+5 = ${alturaTotalCm} cm</h3>
+      <h3>Molde ${item.nombre} /${alturaMoldeCm || (item.altura_mm/10)}+${espessuraLaminaCm} = ${(alturaMoldeCm || (item.altura_mm/10)) + espessuraLaminaCm} cm</h3>
     </div>
     
     <div class="calculation-box">
       <div class="product-image-container">
-        <img src="${productImage}" alt="${state.direccionalidad === 'bi' ? 'Bidireccional' : 'Unidireccional'}" class="product-type-image">
+        <img src="${productImage}" alt="${item.direccionalidad === 'bi' ? 'Bidireccional' : 'Unidireccional'}" class="product-type-image">
       </div>
       <div class="inertia-section">
         <p><strong>Inercia / nervadura: ${item.inercia_cm4 || 0} cm⁴</strong></p>
@@ -893,7 +1093,7 @@ function renderCard(item, container){
               <td>${item.acero_maciza_kg_m2.toFixed(1)} kg/m²</td>
             </tr>
             <tr>
-              <td><strong>Atex</strong> h = ${alturaTotalCm} cm</td>
+              <td><strong>Atex</strong> h = ${(alturaMoldeCm || (item.altura_mm/10)) + espessuraLaminaCm} cm</td>
               <td>${item.volumen_atex_m3_m2.toFixed(3)} m³/m²</td>
               <td>${item.acero_atex_kg_m2.toFixed(1)} kg/m²</td>
             </tr>
